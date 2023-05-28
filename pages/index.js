@@ -112,15 +112,8 @@ const Home = () => {
     }
   }
 
-  const handleKeyPressInTextMode = e => {
-    if (e.ctrlKey || e.metaKey) {
-      e.preventDefault()
-      if (e.code === 'Digit2') {
-        setBrailleMode(!brailleMode)
-      } else if (e.code === 'Digit3') {
-        setTextToRead(text)
-      }
-    } else if (e.code.includes('Arrow')) {
+  const handleArrowPress = e => {
+    if (e.code.includes('Arrow')) {
       const { value } = e.target
       const length = value.length
       let start = e.target.selectionStart
@@ -141,14 +134,41 @@ const Home = () => {
     }
   }
 
-  const handleKeyPressInBrailleMode = e => {
-    if (e.ctrlKey || e.metaKey) {
-      e.preventDefault()
-      if (e.code === 'Digit1') {
-        setBrailleMode(!brailleMode)
-      } else if (e.code === 'Digit3') {
+  const handleCtrl1 = () => {
+    if (brailleMode) {
+      setBrailleMode(false)
+    }
+  }
+
+  const handleCtrl2 = () => {
+    if (!brailleMode) {
+      setBrailleMode(true)
+    }
+  }
+
+  const handleCtrl3 = () => {
+    if (!text) {
+      setTextToRead('Your document is empty.')
+    } else {
+      if (brailleMode) {
         setTextToRead(dotText)
+      } else {
+        setTextToRead(text)
       }
+    }
+  }
+
+  const handleKeyDown = e => {
+    if (e.ctrlKey || e.metaKey) {
+      if (e.code === 'Digit1') {
+        handleCtrl1()
+      } else if (e.code === 'Digit2') {
+        handleCtrl2()
+      } else if (e.code === 'Digit3') {
+        handleCtrl3()
+      }
+    } else {
+      handleArrowPress(e)
     }
   }
 
@@ -156,6 +176,13 @@ const Home = () => {
     e.preventDefault()
     setBrailleMode(!brailleMode)
   }
+
+  useEffect(() => {
+    document.addEventListener('keypress', handleKeyDown)
+    return(() => {
+      document.removeEventListener('keypress', handleKeyDown)
+    })
+  })
 
   useEffect(() => {
     if (brailleMode) {
@@ -185,7 +212,7 @@ const Home = () => {
           <textarea
             id='brailleText'
             name='brailleText'
-            onKeyDown={handleKeyPressInBrailleMode}
+            onKeyDown={handleKeyDown}
             placeholder='View in Braille'
             readOnly
             ref={brailleTextRef}
@@ -196,7 +223,7 @@ const Home = () => {
           <textarea
             id='text'
             onChange={onChange}
-            onKeyDown={handleKeyPressInTextMode}
+            onKeyDown={handleKeyDown}
             name='text'
             placeholder='Type in English'
             ref={textRef}
