@@ -114,8 +114,8 @@ const Home = () => {
 
   const handleArrowPress = e => {
     if (e.code.includes('Arrow')) {
-      const { value } = e.target
-      const length = value.length
+      //const { value } = e.target
+      const length = text.length
       let start = e.target.selectionStart
      
       if (e.code === 'ArrowLeft') {
@@ -125,11 +125,16 @@ const Home = () => {
       }
       
       if (start <= 0) {
-        setTextToRead(`${value[0]}, beginning of the document`)
+        const char = text[0]
+        const cursorText = brailleMode ? character_dict[char.toUpperCase()]['dot'] : char
+        setTextToRead(`${cursorText} beginning of the document`)
       } else if (start >= length) {
         setTextToRead('End of the document')
       } else {
-        setTextToRead(value[start].trim() || 'space')
+        const char = text[start]
+        console.log(135, char)
+        const cursorText = brailleMode ? character_dict[char.toUpperCase()]['dot'] : char.trim()
+        setTextToRead(cursorText || 'space')
       }
     }
   }
@@ -147,7 +152,10 @@ const Home = () => {
   }
 
   const handleCtrl3 = () => {
-    if (!text) {
+    const selectedText = window.getSelection().toString()
+    if (selectedText) {
+      setTextToRead(selectedText)
+    }else if (!text) {
       setTextToRead('Your document is empty.')
     } else {
       if (brailleMode) {
@@ -184,6 +192,12 @@ const Home = () => {
     })
   })
 
+  const handlePlay = e => {
+    e.preventDefault()
+    console.log('189')
+    handleCtrl3()
+  }
+
   useEffect(() => {
     if (brailleMode) {
       brailleTextRef.current.focus()
@@ -207,6 +221,7 @@ const Home = () => {
     <div style={{ height: `100vh`, width: `100%` }}>
       <h1>Braille Board</h1>
       <button id='toggle' onClick={toggle}> Toggle </button>
+      <button id='play' onClick={handlePlay}> Play </button>
       { brailleMode 
         ? (
           <textarea
@@ -214,7 +229,6 @@ const Home = () => {
             name='brailleText'
             onKeyDown={handleKeyDown}
             placeholder='View in Braille'
-            readOnly
             ref={brailleTextRef}
             style={{ fontSize: `50px`, height: `100%`, lineHeight: `1`, overflow: `hidden`, width: `100%` }}
             value={brailleText}
