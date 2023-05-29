@@ -218,10 +218,12 @@ const Home = () => {
   }, [ textToRead ])
 
   return (
-    <div style={{ height: `100vh`, width: `100%` }}>
-      <h1>Braille Board</h1>
-      <button id='toggle' onClick={toggle}> Toggle </button>
-      <button id='play' onClick={handlePlay}> Play </button>
+    <div style={{ justifyContent: `center`, height: `100vh`, width: `100%` }}>
+      <div style={{ alignItems: `center`, display: `flex`, flexFlow: `row wrap`, gap:`10px`, height: `40px` }}>
+        <h1>Braille Board</h1>
+        <button id='toggle' onClick={toggle} style={{ fontSize: `20px` }}> Toggle </button>
+        <button id='play' onClick={handlePlay} style={{ fontSize: `20px` }}> Play </button>
+      </div>
       { brailleMode 
         ? (
           <textarea
