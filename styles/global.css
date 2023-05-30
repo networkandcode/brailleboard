@@ -2,3 +2,14 @@ body {
     background-color: black;
     color: white;
 }
+
+button {
+    font-size: 20px;
+}
+
+div.topBtns {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap:10px;
+}

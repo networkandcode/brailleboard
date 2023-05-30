@@ -1,8 +1,8 @@
 import { Client, Databases, ID } from 'appwrite'
 import { useState } from 'react'
 
-const AppwriteDB = ({ text }) => {
-    const [ id, setId ] = useState()
+const AppwriteDB = ({ routeId, text }) => {
+    const [ id, setId ] = useState(routeId)
 
     const client = new Client()
         .setEndpoint('https://cloud.appwrite.io/v1')

@@ -1,8 +1,10 @@
-import SaveToAppwriteDB from '../components/SaveToAppwriteDB'
+import SaveToAppwriteDB from '../../components/SaveToAppwriteDB'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import { useEffect, useState, useRef } from 'react'
 
 const Home = () => {
+  const router = useRouter()
   const msg = typeof window !== 'undefined' && new SpeechSynthesisUtterance()
   if (msg) {
     msg.rate = 0.8
@@ -187,18 +189,22 @@ const Home = () => {
     setBrailleMode(!brailleMode)
   }
 
+  const handlePlay = e => {
+    e.preventDefault()
+    console.log('189')
+    handleCtrl3()
+  }
+
+  useEffect(() => {
+   
+  })
+
   useEffect(() => {
     document.addEventListener('keypress', handleKeyDown)
     return(() => {
       document.removeEventListener('keypress', handleKeyDown)
     })
   })
-
-  const handlePlay = e => {
-    e.preventDefault()
-    console.log('189')
-    handleCtrl3()
-  }
 
   useEffect(() => {
     if (brailleMode) {
@@ -229,10 +235,10 @@ const Home = () => {
         </Link>
         <button id='toggle' onClick={toggle} style={{ fontSize: `20px` }}> Toggle </button>
         <button id='play' onClick={handlePlay} style={{ fontSize: `20px` }}> Play </button>
-        <SaveToAppwriteDB text={text}/>
+        <SaveToAppwriteDB routeId={router.query.id} text={text}/>
       </div>
       <div style={{ justifyContent: `center`, height: `100vh`, width: `100%` }} >
-        <h2> New document: </h2>
+        <h2> Edit document: </h2>
         { brailleMode 
         ? (
           <textarea

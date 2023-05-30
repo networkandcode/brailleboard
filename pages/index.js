@@ -1,6 +1,7 @@
 import ListDocsFromAppwriteDB from '../components/ListDocsFromAppwriteDB'
 import SaveToAppwriteDB from '../components/SaveToAppwriteDB'
-import { useEffect, useState, useRef } from "react"
+import Link from 'next/link'
+import { useEffect, useState, } from 'react'
 
 const Home = () => {
   const msg = typeof window !== 'undefined' && new SpeechSynthesisUtterance()
@@ -13,9 +14,6 @@ const Home = () => {
   const [ dotText, setDotText ] = useState('')
   const [text, setText] = useState('')
   const [ textToRead, setTextToRead ] = useState('')
-
-  const textRef = useRef()
-  const brailleTextRef = useRef()
 
   // generated with chatgpt
   const character_dict = {
@@ -202,10 +200,8 @@ const Home = () => {
 
   useEffect(() => {
     if (brailleMode) {
-      brailleTextRef.current.focus()
       setTextToRead('You are in braille view mode')
     } else {
-      textRef.current.focus()
       setTextToRead('You are in text edit mode')
     }
   },[ brailleMode ])
@@ -221,15 +217,12 @@ const Home = () => {
 
   return (
     <div style={{ justifyContent: `center`, height: `100vh`, width: `100%` }}>
-      <div style={{ alignItems: `center`, display: `flex`, flexWrap: `wrap`, gap:`10px` }}>
-        <h1>Braille Board</h1>
-        <button id='toggle' onClick={toggle} style={{ fontSize: `20px` }}> Toggle </button>
-        <button id='play' onClick={handlePlay} style={{ fontSize: `20px` }}> Play </button>
-        <SaveToAppwriteDB text={text}/>
+      <div className='topBtns'>
+        <Link href='/new'>
+          <button> New </button>
+        </Link>
       </div>
-      <>
-        <ListDocsFromAppwriteDB />
-      </>
+      <ListDocsFromAppwriteDB />
     </div>
   )
 }
