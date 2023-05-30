@@ -1,8 +1,11 @@
+import { useData } from '../hooks/useData'
 import { Client, Databases, ID } from 'appwrite'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
-const AppwriteDB = ({ routeId, text }) => {
-    const [ id, setId ] = useState(routeId)
+const AppwriteDB = ({ docId, text }) => {
+    const data = useData()
+    const { createDocumentLocally, updateDocumentLocally } = data
+    const [ id, setId ] = useState(docId)
 
     const client = new Client()
         .setEndpoint('https://cloud.appwrite.io/v1')
@@ -21,6 +24,7 @@ const AppwriteDB = ({ routeId, text }) => {
         promise.then(function (response) {
             console.log(response)
             setId(response.$id)
+            createDocumentLocally(response)
         }, function (error) {
             console.log(error)
         })
@@ -36,6 +40,7 @@ const AppwriteDB = ({ routeId, text }) => {
     
         promise.then(function (response) {
             console.log(response)
+            updateDocumentLocally(response)
         }, function (error) {
             console.log(error)
         })
@@ -50,6 +55,10 @@ const AppwriteDB = ({ routeId, text }) => {
             createDocument()
         }
     } 
+
+    useEffect(() => {
+
+    }, [id, text])
 
     return (
         <button id='save' onClick={handleSave} style={{ fontSize: `20px` }}> Save </button>

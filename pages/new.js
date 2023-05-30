@@ -1,5 +1,7 @@
 import SaveToAppwriteDB from '../components/SaveToAppwriteDB'
+import { useData } from '../hooks/useData'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import { useEffect, useState, useRef } from 'react'
 
 const Home = () => {
@@ -10,12 +12,17 @@ const Home = () => {
 
   const [ brailleMode, setBrailleMode ] = useState(false)
   const [ brailleText, setBrailleText ] = useState('')
+  const [ docId, setDocId ] = useState()
   const [ dotText, setDotText ] = useState('')
   const [text, setText] = useState('')
   const [ textToRead, setTextToRead ] = useState('')
 
+  const data = useData()
+  const router = useRouter()
   const textRef = useRef()
   const brailleTextRef = useRef()
+
+  const { docs } = data
 
   // generated with chatgpt
   const character_dict = {
@@ -182,6 +189,12 @@ const Home = () => {
     }
   }
 
+  const handlePlay = e => {
+    e.preventDefault()
+    console.log('189')
+    handleCtrl3()
+  }
+
   const toggle = e => {
     e.preventDefault()
     setBrailleMode(!brailleMode)
@@ -192,13 +205,18 @@ const Home = () => {
     return(() => {
       document.removeEventListener('keypress', handleKeyDown)
     })
-  })
+  },[])
 
-  const handlePlay = e => {
-    e.preventDefault()
-    console.log('189')
-    handleCtrl3()
-  }
+  useEffect(() => {
+    if (router) {
+      const docId = router.query.id
+      docs.forEach( doc => {
+        if (doc.$id === docId) {
+          setText(doc.text)
+        }
+      })
+    }
+  }, [ router ])
 
   useEffect(() => {
     if (brailleMode) {
@@ -229,10 +247,10 @@ const Home = () => {
         </Link>
         <button id='toggle' onClick={toggle} style={{ fontSize: `20px` }}> Toggle </button>
         <button id='play' onClick={handlePlay} style={{ fontSize: `20px` }}> Play </button>
-        <SaveToAppwriteDB text={text}/>
+        <SaveToAppwriteDB docId={router.query.id} text={text} />
       </div>
       <div style={{ justifyContent: `center`, height: `100vh`, width: `100%` }} >
-        <h2> New document: </h2>
+        <h2> Text editor below: </h2>
         { brailleMode 
         ? (
           <textarea

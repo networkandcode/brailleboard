@@ -9,11 +9,11 @@ const Home = () => {
     msg.rate = 0.8
   }
 
-  const [ brailleMode, setBrailleMode ] = useState(false)
-  const [ brailleText, setBrailleText ] = useState('')
-  const [ dotText, setDotText ] = useState('')
+  const [brailleMode, setBrailleMode] = useState(false)
+  const [brailleText, setBrailleText] = useState('')
+  const [dotText, setDotText] = useState('')
   const [text, setText] = useState('')
-  const [ textToRead, setTextToRead ] = useState('')
+  const [textToRead, setTextToRead] = useState('')
 
   // generated with chatgpt
   const character_dict = {
@@ -68,12 +68,12 @@ const Home = () => {
     '#': { dot: 'dot 3 4 6 6', braille: '⠼⠲' },
     '@': { dot: 'dot 2 3 6 5 6', braille: '⠜⠜' },
     ';': { dot: 'dot 2 3 6', braille: '⠆' },
-  };    
-  
+  };
+
   const onChange = e => {
     e.preventDefault()
     const { value } = e.target
-    
+
     setText(value)
 
     let linesInBraille = []
@@ -81,8 +81,8 @@ const Home = () => {
 
     value.split('\n').map(lineInEnglish => {
       if (lineInEnglish === '') {
-        linesInBraille = [ ...linesInBraille, lineInEnglish ]
-        linesInDot = [ ...linesInDot, lineInEnglish ]
+        linesInBraille = [...linesInBraille, lineInEnglish]
+        linesInDot = [...linesInDot, lineInEnglish]
       } else {
         let lineInBraille = ''
         let lineInDot = ''
@@ -94,8 +94,8 @@ const Home = () => {
             lineInBraille += char === ' ' ? char : character_dict[char]['braille']
             lineInDot += char === ' ' ? char : character_dict[char]['dot']
           })
-        linesInBraille = [ ...linesInBraille, lineInBraille ]
-        linesInDot = [ ...linesInDot, lineInDot ]
+        linesInBraille = [...linesInBraille, lineInBraille]
+        linesInDot = [...linesInDot, lineInDot]
       }
     })
 
@@ -117,13 +117,13 @@ const Home = () => {
       //const { value } = e.target
       const length = text.length
       let start = e.target.selectionStart
-     
+
       if (e.code === 'ArrowLeft') {
         start = start - 1
       } else if (e.code === 'ArrowRight') {
         start = start + 1
       }
-      
+
       if (start <= 0) {
         const char = text[0]
         const cursorText = brailleMode ? character_dict[char.toUpperCase()]['dot'] : char
@@ -155,7 +155,7 @@ const Home = () => {
     const selectedText = window.getSelection().toString()
     if (selectedText) {
       setTextToRead(selectedText)
-    }else if (!text) {
+    } else if (!text) {
       setTextToRead('Your document is empty.')
     } else {
       if (brailleMode) {
@@ -187,7 +187,7 @@ const Home = () => {
 
   useEffect(() => {
     document.addEventListener('keypress', handleKeyDown)
-    return(() => {
+    return (() => {
       document.removeEventListener('keypress', handleKeyDown)
     })
   })
@@ -204,16 +204,16 @@ const Home = () => {
     } else {
       setTextToRead('You are in text edit mode')
     }
-  },[ brailleMode ])
+  }, [brailleMode])
 
   useEffect(() => {
     msg.text = textToRead
     if (typeof window !== 'undefined') {
-      if(msg.text) {
+      if (msg.text) {
         speechSynthesis.speak(msg)
       }
     }
-  }, [ textToRead ])
+  }, [textToRead])
 
   return (
     <div style={{ justifyContent: `center`, height: `100vh`, width: `100%` }}>
