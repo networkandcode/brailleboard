@@ -43,7 +43,7 @@ const ListDocsFromAppwriteDB = () => {
                     ))}
                 </div>
             </>
-        ) : <h2 className='navigationElement    '> No documents added. </h2>
+        ) : <h2 className='navigationElement    '> There are no documents presently </h2>
     )
 }
 

@@ -1,8 +1,11 @@
 import { DataProvider } from '../hooks/useData'
 import '../styles/global.css'
+import { useRouter } from 'next/router'
 import { useEffect } from 'react'
 
 const App = ({ Component, pageProps }) => {
+    const router = useRouter()
+
     const msg = typeof window !== 'undefined' && new SpeechSynthesisUtterance()
     
     if (msg) {
@@ -22,7 +25,7 @@ const App = ({ Component, pageProps }) => {
             const index = Array.from(elements).indexOf(focusedElement)
             const nextIndex = (index + 1) % elements.length
             elements[nextIndex].focus()
-            msg.text = elements[nextIndex].innerText
+            msg.text = elements[nextIndex].innerText ||  elements[nextIndex].getAttribute('name')
             if (msg.text) speechSynthesis.speak(msg)
         }
 
@@ -36,8 +39,14 @@ const App = ({ Component, pageProps }) => {
             }
         }
 
-        document.addEventListener('keydown', onKeyDown)
+        window.addEventListener('keydown', onKeyDown)
     }, [])
+
+    useEffect(() => {
+        if (router) {
+            console.log(router.basePath)
+        }
+    }, [ router ])
 
     return (
         <DataProvider>

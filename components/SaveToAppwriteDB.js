@@ -22,7 +22,6 @@ const AppwriteDB = ({ docId, text }) => {
         )
     
         promise.then(function (response) {
-            console.log(response)
             setId(response.$id)
             createDocumentLocally(response)
         }, function (error) {
@@ -39,7 +38,6 @@ const AppwriteDB = ({ docId, text }) => {
         )
     
         promise.then(function (response) {
-            console.log(response)
             updateDocumentLocally(response)
         }, function (error) {
             console.log(error)
@@ -48,12 +46,19 @@ const AppwriteDB = ({ docId, text }) => {
 
     const handleSave = e => {
         e.preventDefault()
-        console.log(text)
         if (id) {
             updateDocument()
         } else {
             createDocument()
         }
+        const msg = typeof window !== 'undefined' && new SpeechSynthesisUtterance()
+    
+        if (msg) {
+            msg.rate = 0.8
+        }
+
+        msg.text = 'Your document is saved'
+        speechSynthesis.speak(msg)
     } 
 
     useEffect(() => {
@@ -61,7 +66,7 @@ const AppwriteDB = ({ docId, text }) => {
     }, [id, text])
 
     return (
-        <button id='save' onClick={handleSave} style={{ fontSize: `20px` }}> Save </button>
+        <button className='navigationElement' id='save' onClick={handleSave} style={{ fontSize: `20px` }}> Save </button>
     )
 }
 

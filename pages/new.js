@@ -136,7 +136,7 @@ const Home = () => {
       if (start <= 0) {
         const char = text[0]
         const cursorText = brailleMode ? character_dict[char.toUpperCase()]['dot'] : char
-        setTextToRead(`${cursorText} beginning of the document`)
+        setTextToRead(`${cursorText !== 'undefined' ? cursorText : ''} beginning of the document`)
       } else if (start >= length) {
         setTextToRead('End of the document')
       } else {
@@ -164,7 +164,7 @@ const Home = () => {
     const selectedText = window.getSelection().toString()
     if (selectedText) {
       setTextToRead(selectedText)
-    }else if (!text) {
+    } else if (!text) {
       setTextToRead('Your document is empty.')
     } else {
       if (brailleMode) {
@@ -185,6 +185,7 @@ const Home = () => {
 
   const handleKeyDown = e => {
     if (e.ctrlKey || e.metaKey) {
+      e.preventDefault()
       if (e.code === 'Digit1') {
         handleCtrl1()
       } else if (e.code === 'Digit2') {
@@ -199,7 +200,6 @@ const Home = () => {
 
   const handlePlay = e => {
     e.preventDefault()
-    console.log('189')
     handleCtrl3()
   }
 
@@ -210,7 +210,9 @@ const Home = () => {
 
   useEffect(() => {
     document.addEventListener('keypress', handleKeyDown)
+    console.log(212)
     return(() => {
+      console.log(214)
       document.removeEventListener('keypress', handleKeyDown)
     })
   },[])
@@ -249,20 +251,21 @@ const Home = () => {
     <div>
       <div className='topBtns'>
         <Link href='/'>
-          <button>
-            List
+          <button className='navigationElement'>
+            List all documents
           </button>
         </Link>
-        <button id='toggle' onClick={toggle} style={{ fontSize: `20px` }}> Toggle </button>
-        <button id='play' onClick={handlePlay} style={{ fontSize: `20px` }}> Play </button>
+        <button className='navigationElement' id='toggle' onClick={toggle} style={{ fontSize: `20px` }}> Toggle </button>
+        <button className='navigationElement' id='play' onClick={handlePlay} style={{ fontSize: `20px` }}> Play </button>
         <SaveToAppwriteDB docId={router.query.id} text={text} />
-        { router?.query?.id && <button id='delete' onClick={handleDelete} style={{ fontSize: `20px` }}> Delete </button> }
+        { router?.query?.id && <button className='navigationElement' id='delete' onClick={handleDelete} style={{ fontSize: `20px` }}> Delete </button> }
       </div>
       <div style={{ justifyContent: `center`, height: `100vh`, width: `100%` }} >
-        <h2> Text editor below: </h2>
+        <h2 className='navigationElement'> Text editor below: </h2>
         { brailleMode 
         ? (
           <textarea
+            className='navigationElement'
             id='brailleText'
             name='brailleText'
             onKeyDown={handleKeyDown}
@@ -273,6 +276,7 @@ const Home = () => {
           />
         ) : ( 
           <textarea
+            className='navigationElement'
             id='text'
             onChange={onChange}
             onKeyDown={handleKeyDown}
@@ -284,6 +288,10 @@ const Home = () => {
           />
         )
       }
+      <div className='navigationElement' style={{ paddingBottom: `10px` }}>
+                <h3> Keyboard shortcuts: </h3>
+                <p> When you are in the textbox, press Ctrl 1 for Text edit mode, Ctrl 2 for Braille view mode, Ctrl 3 to speak text </p>
+      </div>
       </div>
     </div>
   )
