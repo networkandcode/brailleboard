@@ -219,7 +219,7 @@ const Home = () => {
     <div style={{ justifyContent: `center`, height: `100vh`, width: `100%` }}>
       <div className='topBtns'>
         <Link href='/new'>
-          <button> New </button>
+          <button className='navigationElement'> Add new document </button>
         </Link>
       </div>
       <ListDocsFromAppwriteDB />

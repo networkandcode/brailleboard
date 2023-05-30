@@ -29,6 +29,22 @@ const useDataProvider = () => {
         setDocs([ ...docs, docToBeAdded ])
     }
 
+    const deleteDocument = (docToBeDeleted) => {
+        const promise = databases.deleteDocument('64749be89016073c0ecd', '64749bf90162aa302c42', docToBeDeleted.$id)
+    
+        promise.then(function (response) {
+            console.log(response) // Success
+            let temp = docs
+            temp.forEach((doc, idx) => {
+                if(doc.$id === docToBeDeleted.$id)
+                temp.splice(idx, 1)
+            })
+            setDocs(temp)
+        }, function (error) {
+            console.log(error) // Failure
+        })
+    }
+
     const updateDocumentLocally = (docToBeModified) => {
         let temp = docs
         docs.forEach( (doc, idx) => {
@@ -46,6 +62,7 @@ const useDataProvider = () => {
     return {
         createDocumentLocally,
         docs,
+        deleteDocument,
         updateDocumentLocally,
     }
 }

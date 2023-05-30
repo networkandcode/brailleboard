@@ -22,7 +22,7 @@ const Home = () => {
   const textRef = useRef()
   const brailleTextRef = useRef()
 
-  const { docs } = data
+  const { deleteDocument, docs, } = data
 
   // generated with chatgpt
   const character_dict = {
@@ -175,6 +175,14 @@ const Home = () => {
     }
   }
 
+  const handleDelete = e => {
+    e.preventDefault()
+    alert('Press enter to confirm delete.')
+    deleteDocument( { $id: router.query.id } )
+    setTextToRead('Document deleted. You are being redirected to home page.')
+    router.push('/')
+  }
+
   const handleKeyDown = e => {
     if (e.ctrlKey || e.metaKey) {
       if (e.code === 'Digit1') {
@@ -248,6 +256,7 @@ const Home = () => {
         <button id='toggle' onClick={toggle} style={{ fontSize: `20px` }}> Toggle </button>
         <button id='play' onClick={handlePlay} style={{ fontSize: `20px` }}> Play </button>
         <SaveToAppwriteDB docId={router.query.id} text={text} />
+        { router?.query?.id && <button id='delete' onClick={handleDelete} style={{ fontSize: `20px` }}> Delete </button> }
       </div>
       <div style={{ justifyContent: `center`, height: `100vh`, width: `100%` }} >
         <h2> Text editor below: </h2>
