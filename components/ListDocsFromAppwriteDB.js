@@ -27,6 +27,21 @@ const ListDocsFromAppwriteDB = () => {
     useEffect(() => {
         setDocs(data.docs)
     }, [ router, data ])
+
+    useEffect(() => {
+        const elements = typeof window !== 'undefined' && document.querySelectorAll('.navigationElement')
+        
+        // Assign a tabindex to each element
+        elements.forEach((element, index) => {
+            element.setAttribute('tabindex', index + 1)
+        })
+
+        return (() => {
+            elements.forEach((element, index) => {
+                element.removeAttribute('tabindex')
+            })
+        })
+      },[ docs ])
     
     return (
         docs.length > 0 ? (
@@ -35,7 +50,7 @@ const ListDocsFromAppwriteDB = () => {
                 <div style={{ display: `flex`, flexWrap: `wrap`, gap:`5px` }} >
                     { docs.map(doc => (
                         <Link href={`/new/?id=${doc.$id}`} key={doc.$id} style={{ color: `inherit`, textDecoration: `none` }}>
-                            <div style={{ border: `1px solid white`, flex: `200px`, padding: `5px` }}>
+                            <div className='navigationElement' style={{ border: `1px solid white`, padding: `5px` }}>
                                 <p> { doc.text.slice(0, 100) } </p>
                                 <p> Last saved on { formatDate(doc.$updatedAt) } </p>
                             </div>

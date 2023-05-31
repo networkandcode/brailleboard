@@ -1,5 +1,6 @@
 import ListDocsFromAppwriteDB from '../components/ListDocsFromAppwriteDB'
-import SaveToAppwriteDB from '../components/SaveToAppwriteDB'
+import characterDict from '../constants/characterDict'
+import focusNextElement from '../lib/focusNextElement'
 import Link from 'next/link'
 import { useEffect, useState, } from 'react'
 
@@ -14,61 +15,7 @@ const Home = () => {
   const [dotText, setDotText] = useState('')
   const [text, setText] = useState('')
   const [textToRead, setTextToRead] = useState('')
-
-  // generated with chatgpt
-  const character_dict = {
-    A: { dot: 'dot 1', braille: '⠁' },
-    B: { dot: 'dot 1 2', braille: '⠃' },
-    C: { dot: 'dot 1 4', braille: '⠉' },
-    D: { dot: 'dot 1 4 5', braille: '⠙' },
-    E: { dot: 'dot 1 5', braille: '⠑' },
-    F: { dot: 'dot 1 2 4', braille: '⠋' },
-    G: { dot: 'dot 1 2 4 5', braille: '⠛' },
-    H: { dot: 'dot 1 2 5', braille: '⠓' },
-    I: { dot: 'dot 2 4', braille: '⠊' },
-    J: { dot: 'dot 2 4 5', braille: '⠚' },
-    K: { dot: 'dot 1 3', braille: '⠅' },
-    L: { dot: 'dot 1 2 3', braille: '⠇' },
-    M: { dot: 'dot 1 3 4', braille: '⠍' },
-    N: { dot: 'dot 1 3 4 5', braille: '⠝' },
-    O: { dot: 'dot 1 3 5', braille: '⠕' },
-    P: { dot: 'dot 1 2 3 4', braille: '⠏' },
-    Q: { dot: 'dot 1 2 3 4 5', braille: '⠟' },
-    R: { dot: 'dot 1 2 3 5', braille: '⠗' },
-    S: { dot: 'dot 2 3 4', braille: '⠎' },
-    T: { dot: 'dot 2 3 4 5', braille: '⠞' },
-    U: { dot: 'dot 1 3 6', braille: '⠥' },
-    V: { dot: 'dot 1 2 3 6', braille: '⠧' },
-    W: { dot: 'dot 2 4 5 6', braille: '⠺' },
-    X: { dot: 'dot 1 3 4 6', braille: '⠭' },
-    Y: { dot: 'dot 1 3 4 5 6', braille: '⠽' },
-    Z: { dot: 'dot 1 3 5 6', braille: '⠵' },
-    '0': { dot: 'dot 2 4 5 5', braille: '⠼⠚' },
-    '1': { dot: 'dot 1', braille: '⠼⠁' },
-    '2': { dot: 'dot 1 2', braille: '⠼⠃' },
-    '3': { dot: 'dot 1 4', braille: '⠼⠉' },
-    '4': { dot: 'dot 1 4 5', braille: '⠼⠙' },
-    '5': { dot: 'dot 1 5', braille: '⠼⠑' },
-    '6': { dot: 'dot 1 2 4', braille: '⠼⠋' },
-    '7': { dot: 'dot 1 2 4 5', braille: '⠼⠛' },
-    '8': { dot: 'dot 1 2 5', braille: '⠼⠓' },
-    '9': { dot: 'dot 2 4 5 5', braille: '⠼⠚' },
-    '.': { dot: 'dot 3 4 6', braille: '⠲' },
-    ',': { dot: 'dot 3', braille: '⠂' },
-    '?': { dot: 'dot 2 3 6', braille: '⠢' },
-    '!': { dot: 'dot 1 2 3 5 6', braille: '⠖' },
-    "'": { dot: 'dot 2', braille: '⠄' },
-    '"': { dot: 'dot 2 3 5 6', braille: '⠶' },
-    '-': { dot: 'dot 2 5 6', braille: '⠤' },
-    '(': { dot: 'dot 2 3 6 6', braille: '⠐⠣' },
-    ')': { dot: 'dot 2 3 6 5 6', braille: '⠐⠜' },
-    '/': { dot: 'dot 1 2 4 6', braille: '⠌' },
-    '+': { dot: 'dot 1 2 3 5 6', braille: '⠖' },
-    '=': { dot: 'dot 2 3 5 6 6', braille: '⠐⠶' },
-    '#': { dot: 'dot 3 4 6 6', braille: '⠼⠲' },
-    '@': { dot: 'dot 2 3 6 5 6', braille: '⠜⠜' },
-    ';': { dot: 'dot 2 3 6', braille: '⠆' },
-  };
+  const [ elements, setElements ] = useState()
 
   const onChange = e => {
     e.preventDefault()
@@ -91,8 +38,8 @@ const Home = () => {
           .split('')
           .forEach(char => {
             char = char.toUpperCase()
-            lineInBraille += char === ' ' ? char : character_dict[char]['braille']
-            lineInDot += char === ' ' ? char : character_dict[char]['dot']
+            lineInBraille += char === ' ' ? char : characterDict[char]['braille']
+            lineInDot += char === ' ' ? char : characterDict[char]['dot']
           })
         linesInBraille = [...linesInBraille, lineInBraille]
         linesInDot = [...linesInDot, lineInDot]
@@ -126,14 +73,14 @@ const Home = () => {
 
       if (start <= 0) {
         const char = text[0]
-        const cursorText = brailleMode ? character_dict[char.toUpperCase()]['dot'] : char
+        const cursorText = brailleMode ? characterDict[char.toUpperCase()]['dot'] : char
         setTextToRead(`${cursorText} beginning of the document`)
       } else if (start >= length) {
         setTextToRead('End of the document')
       } else {
         const char = text[start]
         console.log(135, char)
-        const cursorText = brailleMode ? character_dict[char.toUpperCase()]['dot'] : char.trim()
+        const cursorText = brailleMode ? characterDict[char.toUpperCase()]['dot'] : char.trim()
         setTextToRead(cursorText || 'space')
       }
     }
@@ -169,12 +116,17 @@ const Home = () => {
   const handleKeyDown = e => {
     if (e.ctrlKey || e.metaKey) {
       if (e.code === 'Digit1') {
+        e.preventDefault()
         handleCtrl1()
       } else if (e.code === 'Digit2') {
         handleCtrl2()
       } else if (e.code === 'Digit3') {
         handleCtrl3()
       }
+    } else if (e.key === 'Tab') {
+      console.log(57, e.key)
+      e.preventDefault()
+      focusNextElement()
     } else {
       handleArrowPress(e)
     }
@@ -184,13 +136,15 @@ const Home = () => {
     e.preventDefault()
     setBrailleMode(!brailleMode)
   }
-
+  
   useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown)
     document.addEventListener('keypress', handleKeyDown)
     return (() => {
+      window.removeEventListener('keydown', handleKeyDown)
       document.removeEventListener('keypress', handleKeyDown)
     })
-  })
+  },[])
 
   const handlePlay = e => {
     e.preventDefault()

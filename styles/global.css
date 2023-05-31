@@ -4,7 +4,17 @@ body {
 }
 
 button {
+    background-color: white;
+    border: none;
+    color: black;
+    cursor: pointer;
     font-size: 20px;
+}
+
+button:active, button:hover {
+    background-color: black;
+    border: 1px solid white;
+    color: white;
 }
 
 div.topBtns {

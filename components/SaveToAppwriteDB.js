@@ -59,11 +59,7 @@ const AppwriteDB = ({ docId, text }) => {
 
         msg.text = 'Your document is saved'
         speechSynthesis.speak(msg)
-    } 
-
-    useEffect(() => {
-
-    }, [id, text])
+    }
 
     return (
         <button className='navigationElement' id='save' onClick={handleSave} style={{ fontSize: `20px` }}> Save </button>
