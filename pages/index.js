@@ -164,6 +164,7 @@ const Home = () => {
     msg.text = textToRead
     if (typeof window !== 'undefined') {
       if (msg.text) {
+        speechSynthesis.cancel()
         speechSynthesis.speak(msg)
       }
     }
@@ -172,7 +173,7 @@ const Home = () => {
   return (
     <div style={{ justifyContent: `center`, height: `100vh`, width: `100%` }}>
       <div className='topBtns'>
-        <Link href='/new'>
+        <Link href='/editor'>
           <button className='navigationElement'> Add new document </button>
         </Link>
       </div>

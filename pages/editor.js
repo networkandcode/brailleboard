@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useEffect, useState, useRef } from 'react'
 
-const Home = () => {
+const Editor = () => {
   const msg = typeof window !== 'undefined' && new SpeechSynthesisUtterance()
   if (msg) {
     msg.rate = 0.8
@@ -209,6 +209,7 @@ const Home = () => {
     msg.text = textToRead
     if (typeof window !== 'undefined') {
       if(msg.text) {
+        speechSynthesis.cancel()
         speechSynthesis.speak(msg)
       }
     }
@@ -266,4 +267,4 @@ const Home = () => {
   )
 }
 
-export default Home
+export default Editor

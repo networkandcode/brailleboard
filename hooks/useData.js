@@ -1,9 +1,9 @@
-import { Client, Databases, } from 'appwrite'
+import { Client, Databases, ID, } from 'appwrite'
 import { createContext, useContext, useEffect, useState, } from 'react'
 
 const client = new Client()
     .setEndpoint('https://cloud.appwrite.io/v1')
-    .setProject('6436436d3ff7ee65228b')
+    .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJ_ID)
 
 const databases = new Databases(client)
 
@@ -15,7 +15,7 @@ const useDataProvider = () => {
     const [ docs, setDocs ] = useState([])
 
     const listDocuments = () => {
-        const promise = databases.listDocuments('64749be89016073c0ecd', '64749bf90162aa302c42')
+        const promise = databases.listDocuments(process.env.NEXT_PUBLIC_APPWRITE_DB_ID, process.env.NEXT_PUBLIC_APPWRITE_COLL_ID)
     
         promise.then(function (response) {
             console.log(response) // Success
@@ -25,12 +25,35 @@ const useDataProvider = () => {
         })
     }
 
+    const createDocument = async(docToBeAdded) => {
+
+        const { text } = docToBeAdded
+        let newId
+
+        const newDoc = await databases.createDocument(
+            process.env.NEXT_PUBLIC_APPWRITE_DB_ID,
+            process.env.NEXT_PUBLIC_APPWRITE_COLL_ID,
+            ID.unique(),
+            { text },
+        )
+    
+        /*promise.then(function (response) {
+            setDocs([ ...docs, response ])
+            newId = response.$id
+            console.log(newId)
+        }, function (error) {
+            console.log(error)
+        })*/
+
+        console.log(48, newDoc.$id)
+        return newDoc.$id
+    }
+
     const createDocumentLocally = (docToBeAdded) => {
-        setDocs([ ...docs, docToBeAdded ])
     }
 
     const deleteDocument = (docToBeDeleted) => {
-        const promise = databases.deleteDocument('64749be89016073c0ecd', '64749bf90162aa302c42', docToBeDeleted.$id)
+        const promise = databases.deleteDocument(process.env.NEXT_PUBLIC_APPWRITE_DB_ID, process.env.NEXT_PUBLIC_APPWRITE_COLL_ID, docToBeDeleted.$id)
     
         promise.then(function (response) {
             console.log(response) // Success
@@ -45,14 +68,27 @@ const useDataProvider = () => {
         })
     }
 
-    const updateDocumentLocally = (docToBeModified) => {
-        let temp = docs
-        docs.forEach( (doc, idx) => {
-            if (doc.$id === docToBeModified.$id) {
-                temp[idx] = docToBeModified
-            }
+    const updateDocument = (docToBeModified) => {
+        const { $id, text } = docToBeModified
+
+        const promise = databases.updateDocument(
+            process.env.NEXT_PUBLIC_APPWRITE_DB_ID,
+            process.env.NEXT_PUBLIC_APPWRITE_COLL_ID,
+            $id,
+            { text },
+        )
+    
+        promise.then(function (response) {
+            let temp = docs
+            docs.forEach( (doc, idx) => {
+                if (doc.$id === docToBeModified.$id) {
+                    temp[idx] = response
+                }
+            })
+            setDocs(temp)
+        }, function (error) {
+            console.log(error)
         })
-        setDocs(temp)
     }
 
     useEffect(() => {
@@ -60,10 +96,10 @@ const useDataProvider = () => {
     },[])
 
     return {
-        createDocumentLocally,
+        createDocument,
         docs,
         deleteDocument,
-        updateDocumentLocally,
+        updateDocument,
     }
 }
 

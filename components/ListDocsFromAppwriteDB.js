@@ -49,7 +49,7 @@ const ListDocsFromAppwriteDB = () => {
                 <h2 className='navigationElement'> List of saved documents: </h2>
                 <div style={{ display: `flex`, flexWrap: `wrap`, gap:`5px` }} >
                     { docs.map(doc => (
-                        <Link href={`/new/?id=${doc.$id}`} key={doc.$id} style={{ color: `inherit`, textDecoration: `none` }}>
+                        <Link href={`/editor/?id=${doc.$id}`} key={doc.$id} style={{ color: `inherit`, textDecoration: `none` }}>
                             <div className='navigationElement' style={{ border: `1px solid white`, padding: `5px` }}>
                                 <p> { doc.text.slice(0, 100) } </p>
                                 <p> Last saved on { formatDate(doc.$updatedAt) } </p>
