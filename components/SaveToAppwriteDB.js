@@ -8,7 +8,6 @@ const SaveToAppwriteDB = ({ docId, text }) => {
 
     const handleSave = e => {
         e.preventDefault()
-        console.log(11, id)
         if (id) {
             updateDocument({ $id: id, text, })
         } else {

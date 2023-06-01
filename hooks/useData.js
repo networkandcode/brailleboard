@@ -26,45 +26,29 @@ const useDataProvider = () => {
     }
 
     const createDocument = async(docToBeAdded) => {
-
         const { text } = docToBeAdded
-        let newId
-
         const newDoc = await databases.createDocument(
             process.env.NEXT_PUBLIC_APPWRITE_DB_ID,
             process.env.NEXT_PUBLIC_APPWRITE_COLL_ID,
             ID.unique(),
             { text },
         )
-    
-        /*promise.then(function (response) {
-            setDocs([ ...docs, response ])
-            newId = response.$id
-            console.log(newId)
-        }, function (error) {
-            console.log(error)
-        })*/
-
-        console.log(48, newDoc.$id)
+        setDocs([ ...docs, newDoc ])
         return newDoc.$id
-    }
-
-    const createDocumentLocally = (docToBeAdded) => {
     }
 
     const deleteDocument = (docToBeDeleted) => {
         const promise = databases.deleteDocument(process.env.NEXT_PUBLIC_APPWRITE_DB_ID, process.env.NEXT_PUBLIC_APPWRITE_COLL_ID, docToBeDeleted.$id)
     
-        promise.then(function (response) {
-            console.log(response) // Success
+        promise.then(() => {
             let temp = docs
             temp.forEach((doc, idx) => {
                 if(doc.$id === docToBeDeleted.$id)
                 temp.splice(idx, 1)
             })
-            setDocs(temp)
-        }, function (error) {
-            console.log(error) // Failure
+            setDocs([ ...temp ])
+        }, (err) => {
+            console.log(err)
         })
     }
 

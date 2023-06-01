@@ -26,12 +26,7 @@ const Editor = () => {
 
   const { deleteDocument, docs, } = data
 
-  const onChange = e => {
-    e.preventDefault()
-    const { value } = e.target
-    
-    setText(value)
-
+  const convToBraille = (value) => {
     let linesInBraille = []
     let linesInDot = []
 
@@ -55,6 +50,15 @@ const Editor = () => {
       }
     })
 
+    return { linesInBraille, linesInDot }
+  }
+
+  const onChange = e => {
+    e.preventDefault()
+    const { value } = e.target
+    
+    setText(value)
+    const { linesInBraille, linesInDot } = convToBraille(value)
     setBrailleText(linesInBraille.join('\n'))
     setDotText(linesInDot.join('\n'))
 
@@ -214,6 +218,12 @@ const Editor = () => {
       }
     }
   }, [ textToRead ])
+
+  useEffect(() => {
+    const { linesInBraille, linesInDot } = convToBraille(text)
+    setBrailleText(linesInBraille.join('\n'))
+    setDotText(linesInDot.join('\n'))
+  }, [ text ])
 
   return (
     <div>

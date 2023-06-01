@@ -148,7 +148,6 @@ const Home = () => {
 
   const handlePlay = e => {
     e.preventDefault()
-    console.log('189')
     handleCtrl3()
   }
 

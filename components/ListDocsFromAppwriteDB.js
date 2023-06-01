@@ -24,6 +24,13 @@ const ListDocsFromAppwriteDB = () => {
           return localDate
     }
 
+    const handleEnter = e => {
+        if (e.key === 'Enter') {
+            e.preventDefault()
+            e.target.click()
+        }
+    }
+
     useEffect(() => {
         setDocs(data.docs)
     }, [ router, data ])
@@ -47,7 +54,7 @@ const ListDocsFromAppwriteDB = () => {
         docs.length > 0 ? (
             <>
                 <h2 className='navigationElement'> List of saved documents: </h2>
-                <div style={{ display: `flex`, flexWrap: `wrap`, gap:`5px` }} >
+                <div onKeyDown={handleEnter} style={{ display: `flex`, flexWrap: `wrap`, gap:`5px` }} >
                     { docs.map(doc => (
                         <Link href={`/editor/?id=${doc.$id}`} key={doc.$id} style={{ color: `inherit`, textDecoration: `none` }}>
                             <div className='navigationElement' style={{ border: `1px solid white`, padding: `5px` }}>
