@@ -7,17 +7,12 @@ import { useRouter } from 'next/router'
 import { useEffect, useState, useRef } from 'react'
 
 const Editor = () => {
-  const msg = typeof window !== 'undefined' && new SpeechSynthesisUtterance()
-  if (msg) {
-    msg.rate = 0.8
-  }
-
-  const [ brailleMode, setBrailleMode ] = useState(false)
-  const [ brailleText, setBrailleText ] = useState('')
-  const [ docId, setDocId ] = useState()
-  const [ dotText, setDotText ] = useState('')
+  const [brailleMode, setBrailleMode] = useState(false)
+  const [brailleText, setBrailleText] = useState('')
+  const [docId, setDocId] = useState()
+  const [dotText, setDotText] = useState('')
   const [text, setText] = useState('')
-  const [ textToRead, setTextToRead ] = useState('')
+  const [textToRead, setTextToRead] = useState('')
 
   const data = useData()
   const router = useRouter()
@@ -32,8 +27,8 @@ const Editor = () => {
 
     value.split('\n').map(lineInEnglish => {
       if (lineInEnglish === '') {
-        linesInBraille = [ ...linesInBraille, lineInEnglish ]
-        linesInDot = [ ...linesInDot, lineInEnglish ]
+        linesInBraille = [...linesInBraille, lineInEnglish]
+        linesInDot = [...linesInDot, lineInEnglish]
       } else {
         let lineInBraille = ''
         let lineInDot = ''
@@ -45,8 +40,8 @@ const Editor = () => {
             lineInBraille += char === ' ' ? char : characterDict[char]['braille']
             lineInDot += char === ' ' ? char : characterDict[char]['dot']
           })
-        linesInBraille = [ ...linesInBraille, lineInBraille ]
-        linesInDot = [ ...linesInDot, lineInDot ]
+        linesInBraille = [...linesInBraille, lineInBraille]
+        linesInDot = [...linesInDot, lineInDot]
       }
     })
 
@@ -56,7 +51,7 @@ const Editor = () => {
   const onChange = e => {
     e.preventDefault()
     const { value } = e.target
-    
+
     setText(value)
     const { linesInBraille, linesInDot } = convToBraille(value)
     setBrailleText(linesInBraille.join('\n'))
@@ -77,13 +72,13 @@ const Editor = () => {
       //const { value } = e.target
       const length = text.length
       let start = e.target.selectionStart
-     
+
       if (e.code === 'ArrowLeft') {
         start = start - 1
       } else if (e.code === 'ArrowRight') {
         start = start + 1
       }
-      
+
       if (start <= 0) {
         const char = text[0]
         const cursorText = brailleMode ? characterDict[char.toUpperCase()]['dot'] : char
@@ -129,7 +124,7 @@ const Editor = () => {
   const handleDelete = e => {
     e.preventDefault()
     alert('Press enter to confirm delete.')
-    deleteDocument( { $id: router.query.id } )
+    deleteDocument({ $id: router.query.id })
     setTextToRead('Document deleted. You are being redirected to home page.')
     router.push('/')
   }
@@ -166,38 +161,38 @@ const Editor = () => {
   useEffect(() => {
     window.addEventListener('keydown', handleKeyDown)
     document.addEventListener('keypress', handleKeyDown)
-    return(() => {
+    return (() => {
       window.removeEventListener('keydown', handleKeyDown)
       document.removeEventListener('keypress', handleKeyDown)
     })
-  },[])
+  }, [])
 
   useEffect(() => {
     const elements = typeof window !== 'undefined' && document.querySelectorAll('.navigationElement')
-    
+
     console.log(174, elements.length, elements)
     // Assign a tabindex to each element
     elements.forEach((element, index) => {
-        element.setAttribute('tabindex', index + 1)
+      element.setAttribute('tabindex', index + 1)
     })
 
     return (() => {
-        elements.forEach((element) => {
-            element.removeAttribute('tabindex')
-        })
+      elements.forEach((element) => {
+        element.removeAttribute('tabindex')
+      })
     })
-  },[ brailleMode ])
+  }, [brailleMode])
 
   useEffect(() => {
     if (router) {
       const docId = router.query.id
-      docs.forEach( doc => {
+      docs.forEach(doc => {
         if (doc.$id === docId) {
           setText(doc.text)
         }
       })
     }
-  }, [ router ])
+  }, [docs, router])
 
   useEffect(() => {
     if (brailleMode) {
@@ -207,71 +202,76 @@ const Editor = () => {
       textRef.current.focus()
       setTextToRead('You are in text edit mode')
     }
-  },[ brailleMode ])
+  }, [brailleMode])
 
   useEffect(() => {
+    const msg = typeof window !== 'undefined' && new SpeechSynthesisUtterance()
+    if (msg) {
+      msg.rate = 0.8
+    }
     msg.text = textToRead
+
     if (typeof window !== 'undefined') {
-      if(msg.text) {
+      if (msg.text) {
         speechSynthesis.cancel()
         speechSynthesis.speak(msg)
       }
     }
-  }, [ textToRead ])
+  }, [textToRead])
 
   useEffect(() => {
     const { linesInBraille, linesInDot } = convToBraille(text)
     setBrailleText(linesInBraille.join('\n'))
     setDotText(linesInDot.join('\n'))
-  }, [ text ])
+  }, [text])
 
   return (
     <div>
       <div className='topBtns'>
         <Link href='/'>
           <button className='navigationElement'>
-            List all documents
+            Home
           </button>
         </Link>
         <button className='navigationElement' id='toggle' onClick={toggle} style={{ fontSize: `20px` }}> Toggle </button>
         <button className='navigationElement' id='play' onClick={handlePlay} style={{ fontSize: `20px` }}> Play </button>
         <SaveToAppwriteDB docId={router.query.id} text={text} />
-        { router?.query?.id && <button className='navigationElement' id='delete' onClick={handleDelete} style={{ fontSize: `20px` }}> Delete </button> }
+        {router?.query?.id && <button className='navigationElement' id='delete' onClick={handleDelete} style={{ fontSize: `20px` }}> Delete </button>}
       </div>
       <div style={{ justifyContent: `center`, height: `100vh`, width: `100%` }} >
         <h2 className='navigationElement'> Text editor below: </h2>
-        { brailleMode 
-        ? (
-          <textarea
-            className='navigationElement'
-            id='brailleText'
-            name='brailleText'
-            onKeyDown={handleKeyDown}
-            placeholder='View in Braille'
-            ref={brailleTextRef}
-            style={{ fontSize: `50px`, height: `100%`, lineHeight: `1`, overflow: `hidden`, width: `100%` }}
-            value={brailleText}
-          />
-        ) : ( 
-          <textarea
-            className='navigationElement'
-            id='text'
-            onChange={onChange}
-            onKeyDown={handleKeyDown}
-            name='text'
-            placeholder='Type in English'
-            ref={textRef}
-            style={{ fontSize: `50px`, height: `100%`, lineHeight: `1`, overflow: `hidden`, width: `100%` }}
-            value={text}
-          />
-        )
-      }
+        {brailleMode
+          ? (
+            <textarea
+              className='navigationElement'
+              id='brailleText'
+              name='brailleText'
+              onKeyDown={handleKeyDown}
+              placeholder='View in Braille'
+              ref={brailleTextRef}
+              style={{ fontSize: `50px`, height: `100%`, lineHeight: `1`, overflow: `hidden`, width: `100%` }}
+              value={brailleText}
+            />
+          ) : (
+            <textarea
+              className='navigationElement'
+              id='text'
+              onChange={onChange}
+              onKeyDown={handleKeyDown}
+              name='text'
+              placeholder='Type in English'
+              ref={textRef}
+              style={{ fontSize: `50px`, height: `100%`, lineHeight: `1`, overflow: `hidden`, width: `100%` }}
+              value={text}
+            />
+          )
+        }
 
-      <div className='navigationElement' name='keyboardShortcuts' style={{ paddingBottom: `10px` }}>
-        Keyboard shortcuts:
-        When you are in the textbox, press Ctrl 1 for Text edit mode, Ctrl 2 for Braille view mode, Ctrl 3 to speak text
-      </div>
-      
+        <div className='navigationElement' name='keyboardShortcuts' style={{ paddingBottom: `10px` }}>
+          Keyboard shortcuts:
+          When you are in the textbox, press Ctrl 1 for Text edit mode, Ctrl 2 for Braille view mode, Ctrl 3 to speak text
+        </div>
+
       </div>
     </div>
   )

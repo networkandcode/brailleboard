@@ -1,7 +1,11 @@
+import { useAuth } from '../hooks/useAuth'
 import { useData } from '../hooks/useData'
 import { useState } from 'react'
 
 const SaveToAppwriteDB = ({ docId, text }) => {
+    const auth = useAuth()
+    const { user, } = auth
+
     const data = useData()
     const { createDocument, updateDocument, } = data
     const [ id, setId ] = useState(docId)
@@ -11,7 +15,7 @@ const SaveToAppwriteDB = ({ docId, text }) => {
         if (id) {
             updateDocument({ $id: id, text, })
         } else {
-            const promise = createDocument({ text, })
+            const promise = createDocument({ text, }, user.$id)
             promise.then((newId) => {
                 setId(newId)
             })

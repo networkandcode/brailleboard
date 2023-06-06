@@ -1,4 +1,4 @@
-import { Client, Databases, ID, } from 'appwrite'
+import { Client, Databases, ID, Permission, Role, } from 'appwrite'
 import { createContext, useContext, useEffect, useState, } from 'react'
 
 const client = new Client()
@@ -25,13 +25,19 @@ const useDataProvider = () => {
         })
     }
 
-    const createDocument = async(docToBeAdded) => {
+    const createDocument = async(docToBeAdded, userId) => {
+        console.log(userId)
         const { text } = docToBeAdded
         const newDoc = await databases.createDocument(
             process.env.NEXT_PUBLIC_APPWRITE_DB_ID,
             process.env.NEXT_PUBLIC_APPWRITE_COLL_ID,
             ID.unique(),
             { text },
+            [
+                Permission.read(Role.user(userId)),
+                Permission.update(Role.user(userId)),
+                Permission.delete(Role.user(userId))
+            ]
         )
         setDocs([ ...docs, newDoc ])
         return newDoc.$id
