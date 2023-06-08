@@ -18,7 +18,6 @@ const useDataProvider = () => {
         const promise = databases.listDocuments(process.env.NEXT_PUBLIC_APPWRITE_DB_ID, process.env.NEXT_PUBLIC_APPWRITE_COLL_ID)
     
         promise.then(function (response) {
-            console.log(response) // Success
             setDocs(response.documents)
         }, function (error) {
             console.log(error) // Failure
@@ -26,7 +25,6 @@ const useDataProvider = () => {
     }
 
     const createDocument = async(docToBeAdded, userId) => {
-        console.log(userId)
         const { text } = docToBeAdded
         const newDoc = await databases.createDocument(
             process.env.NEXT_PUBLIC_APPWRITE_DB_ID,

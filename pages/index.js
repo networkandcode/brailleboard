@@ -1,6 +1,6 @@
 import ListDocsFromAppwriteDB from '../components/ListDocsFromAppwriteDB'
 import { useAuth } from '../hooks/useAuth'
-import focusNextElement from '../lib/focusNextElement'
+import handleKeyDown from '../lib/handleKeyDown'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useEffect, useState, } from 'react'
@@ -10,14 +10,6 @@ const Home = () => {
   const { deleteSession, user, } = auth
 
   const router = useRouter()
-
-  const handleKeyDown = e => {
-    if (e.key === 'Tab') {
-      console.log(57, e.key)
-      e.preventDefault()
-      focusNextElement()
-    }
-  }
 
   useEffect(() => {
     window.addEventListener('keydown', handleKeyDown)
@@ -29,9 +21,7 @@ const Home = () => {
   },[])
 
   useEffect(() => {
-    console.log(user)
     if (!user?.$id) {
-      console.log('Redirecting to login...')
       router.push('/login')
     }
   }, [ router, user ])

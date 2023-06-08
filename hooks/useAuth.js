@@ -1,3 +1,4 @@
+import speakText from '../lib/speakText'
 import { Account, Client, ID, } from 'appwrite'
 import { useRouter, } from 'next/router'
 import { createContext, useContext, useEffect, useState, } from 'react'
@@ -17,13 +18,20 @@ export const useAuth = () => useContext(AuthContext)
 const useAuthProvider = () => {
     const router = useRouter()
 
-    const [ session, setSession ] = useState({})
+    const [session, setSession] = useState({})
     const [user, setUser] = useState({})
 
     const changeUser = e => {
         e.preventDefault()
         const { name, value } = e.target
         setUser({ ...user, [name]: value })
+
+        const lastChar = value.charAt(value.length - 1)
+        if (lastChar === ' ') {
+            speakText('space')
+        } else {
+            speakText(lastChar)
+        }
     }
 
     const createPhoneSession = () => {
@@ -31,6 +39,7 @@ const useAuthProvider = () => {
         const promise = account.createPhoneSession($id || ID.unique(), phone)
 
         promise.then(token => {
+            speakText('OTP sent')
             setUser({ ...user, $id: token.userId })
             router.push('/otp')
         }), error => {
@@ -42,21 +51,10 @@ const useAuthProvider = () => {
         const promise = account.deleteSession(session.$id)
 
         promise.then(() => {
-            console.log('clear session')
             setSession({})
             localStorage.removeItem('APPWRITE_SESSION')
             setUser({})
-        }), err => {
-            console.log(err)
-        }
-    }
-
-    const deleteSessions = () => {
-        const promise = account.deleteSessions()
-
-        promise.then(() => {
-            setSession({})
-            setUser({})
+            speakText('Logged out')
         }), err => {
             console.log(err)
         }
@@ -67,21 +65,18 @@ const useAuthProvider = () => {
 
         promise.then((resp) => {
             setUser(resp)
-            console.log(56, resp)
         }), err => {
-            console.log(57, err)
+            console.log(err)
         }
     }
 
     const updatePhoneSession = () => {
-        console.log(59, user)
         const { $id, secret, } = user
         const promise = account.updatePhoneSession($id, secret)
 
         promise.then(response => {
             setSession(response)
             localStorage.setItem('APPWRITE_SESSION', JSON.stringify(response))
-            console.log(response)
             router.push('/')
         }), error => {
             console.log(error)
@@ -90,8 +85,7 @@ const useAuthProvider = () => {
 
     useEffect(() => {
         const temp = localStorage.getItem('APPWRITE_SESSION')
-        console.log(temp)
-    
+
         if (temp) {
             const tempInJson = JSON.parse(temp)
             const expiryDate = new Date(tempInJson.expire)
@@ -101,6 +95,8 @@ const useAuthProvider = () => {
                 setSession(JSON.parse(temp))
                 get()
             }
+        } else {
+            localStorage.removeItem('APPWRITE_SESSION')
         }
     }, [])
 
@@ -108,7 +104,6 @@ const useAuthProvider = () => {
         changeUser,
         createPhoneSession,
         deleteSession,
-        deleteSessions,
         session,
         user,
         updatePhoneSession,

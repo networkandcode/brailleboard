@@ -1,7 +1,8 @@
 import SaveToAppwriteDB from '../components/SaveToAppwriteDB'
 import { useData } from '../hooks/useData'
 import characterDict from '../constants/characterDict'
-import focusNextElement from '../lib/focusNextElement'
+import handleKeyDown from '../lib/handleKeyDown'
+import speakText from '../lib/speakText'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useEffect, useState, useRef } from 'react'
@@ -9,7 +10,6 @@ import { useEffect, useState, useRef } from 'react'
 const Editor = () => {
   const [brailleMode, setBrailleMode] = useState(false)
   const [brailleText, setBrailleText] = useState('')
-  const [docId, setDocId] = useState()
   const [dotText, setDotText] = useState('')
   const [text, setText] = useState('')
   const [textToRead, setTextToRead] = useState('')
@@ -67,45 +67,6 @@ const Editor = () => {
     }
   }
 
-  const handleArrowPress = e => {
-    if (e.code.includes('Arrow')) {
-      //const { value } = e.target
-      const length = text.length
-      let start = e.target.selectionStart
-
-      if (e.code === 'ArrowLeft') {
-        start = start - 1
-      } else if (e.code === 'ArrowRight') {
-        start = start + 1
-      }
-
-      if (start <= 0) {
-        const char = text[0]
-        const cursorText = brailleMode ? characterDict[char.toUpperCase()]['dot'] : char
-        setTextToRead(`${cursorText !== 'undefined' ? cursorText : ''} beginning of the document`)
-      } else if (start >= length) {
-        setTextToRead('End of the document')
-      } else {
-        const char = text[start]
-        console.log(135, char)
-        const cursorText = brailleMode ? characterDict[char.toUpperCase()]['dot'] : char.trim()
-        setTextToRead(cursorText || 'space')
-      }
-    }
-  }
-
-  const handleCtrl1 = () => {
-    if (brailleMode) {
-      setBrailleMode(false)
-    }
-  }
-
-  const handleCtrl2 = () => {
-    if (!brailleMode) {
-      setBrailleMode(true)
-    }
-  }
-
   const handleCtrl3 = () => {
     const selectedText = window.getSelection().toString()
     if (selectedText) {
@@ -123,29 +84,11 @@ const Editor = () => {
 
   const handleDelete = e => {
     e.preventDefault()
+    speakText('Press enter to confirm delete.')
     alert('Press enter to confirm delete.')
     deleteDocument({ $id: router.query.id })
-    setTextToRead('Document deleted. You are being redirected to home page.')
+    speakText('Document deleted. You are being redirected to home page.')
     router.push('/')
-  }
-
-  const handleKeyDown = e => {
-    if (e.ctrlKey || e.metaKey) {
-      if (e.code === 'Digit1') {
-        e.preventDefault()
-        handleCtrl1()
-      } else if (e.code === 'Digit2') {
-        handleCtrl2()
-      } else if (e.code === 'Digit3') {
-        handleCtrl3()
-      }
-    } else if (e.key === 'Tab') {
-      console.log(57, e.key)
-      e.preventDefault()
-      focusNextElement()
-    } else {
-      handleArrowPress(e)
-    }
   }
 
   const handlePlay = e => {
@@ -168,20 +111,19 @@ const Editor = () => {
   }, [])
 
   useEffect(() => {
-    const elements = typeof window !== 'undefined' && document.querySelectorAll('.navigationElement')
+    const elements = document.querySelectorAll('.navigationElement')
 
-    console.log(174, elements.length, elements)
     // Assign a tabindex to each element
     elements.forEach((element, index) => {
-      element.setAttribute('tabindex', index + 1)
+        element.setAttribute('tabindex', index + 1)
     })
 
     return (() => {
-      elements.forEach((element) => {
-        element.removeAttribute('tabindex')
-      })
+        elements.forEach((element) => {
+            element.removeAttribute('tabindex')
+        })
     })
-  }, [brailleMode])
+}, [])
 
   useEffect(() => {
     if (router) {
@@ -196,10 +138,8 @@ const Editor = () => {
 
   useEffect(() => {
     if (brailleMode) {
-      brailleTextRef.current.focus()
       setTextToRead('You are in braille view mode')
     } else {
-      textRef.current.focus()
       setTextToRead('You are in text edit mode')
     }
   }, [brailleMode])
@@ -226,7 +166,7 @@ const Editor = () => {
   }, [text])
 
   return (
-    <div>
+    <div style={{ justifyContent: `center`, height: `100vh`, width: `100%` }}>
       <div className='topBtns'>
         <Link href='/'>
           <button className='navigationElement'>
@@ -239,11 +179,12 @@ const Editor = () => {
         {router?.query?.id && <button className='navigationElement' id='delete' onClick={handleDelete} style={{ fontSize: `20px` }}> Delete </button>}
       </div>
       <div style={{ justifyContent: `center`, height: `100vh`, width: `100%` }} >
-        <h2 className='navigationElement'> Text editor below: </h2>
+        <h2 className='navigationElement' description='Text editor label'> Text editor: </h2>
         {brailleMode
           ? (
             <textarea
               className='navigationElement'
+              description='Braille text box'
               id='brailleText'
               name='brailleText'
               onKeyDown={handleKeyDown}
@@ -255,6 +196,7 @@ const Editor = () => {
           ) : (
             <textarea
               className='navigationElement'
+              description='English text box'
               id='text'
               onChange={onChange}
               onKeyDown={handleKeyDown}
@@ -266,12 +208,6 @@ const Editor = () => {
             />
           )
         }
-
-        <div className='navigationElement' name='keyboardShortcuts' style={{ paddingBottom: `10px` }}>
-          Keyboard shortcuts:
-          When you are in the textbox, press Ctrl 1 for Text edit mode, Ctrl 2 for Braille view mode, Ctrl 3 to speak text
-        </div>
-
       </div>
     </div>
   )

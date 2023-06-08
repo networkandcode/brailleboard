@@ -1,6 +1,6 @@
 import { useEffect, } from 'react'
 import { useAuth } from '../hooks/useAuth'
-import focusNextElement from '../lib/focusNextElement'
+import handleKeyDown from '../lib/handleKeyDown'
 import { useRouter } from 'next/router'
 
 const Login = () => {
@@ -8,16 +8,7 @@ const Login = () => {
     const { changeUser, createPhoneSession, session, user, } = auth
     const router = useRouter()
 
-    const handleKeyDown = e => {
-        if (e.key === 'Tab') {
-            console.log(57, e.key)
-            e.preventDefault()
-            focusNextElement()
-        }
-    }
-
     useEffect(() => {
-        console.log('20')
         window.addEventListener('keydown', handleKeyDown)
         document.addEventListener('keypress', handleKeyDown)
         return (() => {
@@ -42,9 +33,7 @@ const Login = () => {
     }, [])
 
     useEffect(() => {
-        console.log(session, user)
         if (session.current && session.userId === user.$id) {
-            console.log('Redirecting to home page...')
             router.push('/')
         }
     }, [router, user,])
@@ -52,10 +41,10 @@ const Login = () => {
     return (
         <form onSubmit={e => { e.preventDefault(); createPhoneSession() }}>
             <div>
-                <label className='navigationElement' htmlFor='phone'> Phone number: </label>
+                <label className='navigationElement' description='Phone number label' htmlFor='phone'> Phone number: </label>
             </div>
             <div>
-                <input className='navigationElement' id='phoneTextBox' name='phone' onChange={changeUser} style={{ marginBottom: `15px`, width: `200px` }} type='text' value={user.phone || ''} />
+                <input className='navigationElement' description='Phone number text box' id='phoneTextBox' name='phone' onChange={changeUser} style={{ marginBottom: `15px`, width: `200px` }} type='text' value={user.phone || ''} />
             </div>
             <div>
                 <button className='navigationElement' type='submit'> Send OTP </button>
