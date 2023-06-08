@@ -1,9 +1,11 @@
 import ListDocsFromAppwriteDB from '../components/ListDocsFromAppwriteDB'
 import { useAuth } from '../hooks/useAuth'
 import handleKeyDown from '../lib/handleKeyDown'
+import speakText from '../lib/speakText'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { useEffect, useState, } from 'react'
+import { useEffect, } from 'react'
+
 
 const Home = () => {
   const auth = useAuth()
@@ -22,6 +24,7 @@ const Home = () => {
 
   useEffect(() => {
     if (!user?.$id) {
+      speakText('Redirecting to login page')
       router.push('/login')
     }
   }, [ router, user ])

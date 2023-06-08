@@ -19,10 +19,10 @@ const OTP = () => {
 
     useEffect(() => {
         window.addEventListener('keydown', handleKeyDown)
-        document.addEventListener('keypress', handleKeyDown)
+        //document.addEventListener('keypress', handleKeyDown)
         return (() => {
             window.removeEventListener('keydown', handleKeyDown)
-            document.removeEventListener('keypress', handleKeyDown)
+            //document.removeEventListener('keypress', handleKeyDown)
         })
     }, [])
 
@@ -47,7 +47,15 @@ const OTP = () => {
                 <label className='navigationElement' description='OTP label' htmlFor='secret'> OTP: </label>
             </div>
             <div>
-                <input className='navigationElement' description='OTP text box' id='secret' name='secret' onChange={changeUser} style={{ marginBottom: `15px`, width: `200px` }} type='number' value={user.secret || ''} />
+                <input 
+                    className='navigationElement' 
+                    description='OTP text box' 
+                    id='secret' 
+                    name='secret' 
+                    onChange={changeUser} 
+                    style={{ marginBottom: `15px`, width: `200px` }} 
+                    value={user.secret || ''} 
+                />
             </div>
             <div>
                 <button className='navigationElement' type='submit'> Continue </button>

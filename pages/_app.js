@@ -9,8 +9,8 @@ const App = ({ Component, pageProps }) => {
     const router = useRouter()
 
     useEffect(() => {
-        let path = router.route
-        if(path === '/') {
+        let path = router.route.replace('/', ' ')
+        if(!path.trim()) {
             path = 'Home'
         }
         speakText(`You are on the ${path} page`)

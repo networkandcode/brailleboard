@@ -44,7 +44,16 @@ const Login = () => {
                 <label className='navigationElement' description='Phone number label' htmlFor='phone'> Phone number: </label>
             </div>
             <div>
-                <input className='navigationElement' description='Phone number text box' id='phoneTextBox' name='phone' onChange={changeUser} style={{ marginBottom: `15px`, width: `200px` }} type='text' value={user.phone || ''} />
+                <input
+                    className='navigationElement' 
+                    description='Phone number text box' 
+                    id='phoneTextBox' 
+                    name='phone' 
+                    onChange={changeUser} 
+                    style={{ marginBottom: `15px`, width: `200px` }} 
+                    type='text' 
+                    value={user.phone || ''} 
+                />
             </div>
             <div>
                 <button className='navigationElement' type='submit'> Send OTP </button>

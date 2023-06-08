@@ -77,6 +77,7 @@ const useAuthProvider = () => {
         promise.then(response => {
             setSession(response)
             localStorage.setItem('APPWRITE_SESSION', JSON.stringify(response))
+            speakText('You are signed in')
             router.push('/')
         }), error => {
             console.log(error)
@@ -94,10 +95,10 @@ const useAuthProvider = () => {
             if (expiryDate >= currentDate) {
                 setSession(JSON.parse(temp))
                 get()
+            } else {
+                localStorage.removeItem('APPWRITE_SESSION')
             }
-        } else {
-            localStorage.removeItem('APPWRITE_SESSION')
-        }
+        } 
     }, [])
 
     return {
@@ -111,6 +112,6 @@ const useAuthProvider = () => {
 }
 
 export const AuthProvider = ({ children }) => {
-    const data = useAuthProvider()
-    return <Provider value={data}> {children} </Provider>
+    const auth = useAuthProvider()
+    return <Provider value={auth}> {children} </Provider>
 }

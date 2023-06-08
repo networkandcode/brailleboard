@@ -1,9 +1,13 @@
-import { useEffect, useState } from 'react'
-import { useData } from '../hooks/useData'
+import { useEffect, useState, } from 'react'
+import { useAuth, } from '../hooks/useAuth'
+import { useData, } from '../hooks/useData'
 import Link from 'next/link'
-import { useRouter } from 'next/router'
+import { useRouter, } from 'next/router'
 
 const ListDocsFromAppwriteDB = () => {
+    const auth = useAuth()
+    const { session } = auth
+
     const data = useData()
     const router = useRouter()
     const [ docs, setDocs ] = useState([])
@@ -33,7 +37,7 @@ const ListDocsFromAppwriteDB = () => {
 
     useEffect(() => {
         setDocs(data.docs)
-    }, [ router, data ])
+    }, [ data, router, session, ])
 
     useEffect(() => {
         const elements = typeof window !== 'undefined' && document.querySelectorAll('.navigationElement')
