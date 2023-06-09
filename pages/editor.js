@@ -186,6 +186,7 @@ const Editor = () => {
               className='navigationElement'
               description='Braille text box'
               id='brailleText'
+              maxlength="1000"
               name='brailleText'
               onKeyDown={handleKeyDown}
               placeholder='View in Braille'
@@ -200,6 +201,7 @@ const Editor = () => {
               id='text'
               onChange={onChange}
               onKeyDown={handleKeyDown}
+              maxlength="1000"
               name='text'
               placeholder='Type in English'
               ref={textRef}
