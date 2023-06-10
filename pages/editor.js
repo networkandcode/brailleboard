@@ -57,14 +57,14 @@ const Editor = () => {
     setBrailleText(linesInBraille.join('\n'))
     setDotText(linesInDot.join('\n'))
 
-    const lastChar = value.charAt(value.length - 1)
+    /*const lastChar = value.charAt(value.length - 1)
     if (lastChar === ' ') {
       setTextToRead('space')
     } else if (lastChar === '\n') {
       setTextToRead('newline')
     } else {
       setTextToRead(lastChar)
-    }
+    }*/
   }
 
   const handleCtrl3 = () => {

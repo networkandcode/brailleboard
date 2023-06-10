@@ -40,6 +40,7 @@ const Login = () => {
 
     return (
         <form onSubmit={e => { e.preventDefault(); createPhoneSession() }}>
+            <h2 className='navigationElement' description='Login label'> Login </h2>
             <div>
                 <label className='navigationElement' description='Phone number label' htmlFor='phone'> Phone number: </label>
             </div>
