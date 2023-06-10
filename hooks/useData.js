@@ -1,3 +1,4 @@
+import { useAuth } from './useAuth'
 import { Client, Databases, ID, Permission, Role, } from 'appwrite'
 import { createContext, useContext, useEffect, useState, } from 'react'
 
@@ -12,6 +13,9 @@ const { Provider } = DataContext
 export const useData = () => useContext(DataContext)
 
 const useDataProvider = () => {
+    const auth = useAuth()
+    const { session, } = auth
+
     const [ docs, setDocs ] = useState([])
 
     const listDocuments = () => {
@@ -81,7 +85,7 @@ const useDataProvider = () => {
 
     useEffect(() => {
         listDocuments()
-    },[])
+    },[ session, ])
 
     return {
         createDocument,

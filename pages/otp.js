@@ -15,7 +15,7 @@ const OTP = () => {
         } else if (!user.phone) {
             router.push('/login')
         }
-    },[ router, user, ])
+    },[ router, session, user, ])
 
     useEffect(() => {
         window.addEventListener('keydown', handleKeyDown)

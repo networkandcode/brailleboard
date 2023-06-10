@@ -36,7 +36,7 @@ const Login = () => {
         if (session.current && session.userId === user.$id) {
             router.push('/')
         }
-    }, [router, user,])
+    }, [router, session, user,])
 
     return (
         <form onSubmit={e => { e.preventDefault(); createPhoneSession() }}>
@@ -48,7 +48,7 @@ const Login = () => {
                 <input
                     className='navigationElement' 
                     description='Phone number text box' 
-                    id='phoneTextBox' 
+                    id='phone' 
                     name='phone' 
                     onChange={changeUser} 
                     style={{ marginBottom: `15px`, width: `200px` }} 

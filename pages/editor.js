@@ -1,7 +1,7 @@
 import SaveToAppwriteDB from '../components/SaveToAppwriteDB'
 import { useData } from '../hooks/useData'
 import characterDict from '../constants/characterDict'
-import handleKeyDown from '../lib/handleKeyDown'
+import handleKeyDown, { handleKeyDownBtn, handleKeyDownText } from '../lib/handleKeyDown'
 import speakText from '../lib/speakText'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
@@ -56,15 +56,6 @@ const Editor = () => {
     const { linesInBraille, linesInDot } = convToBraille(value)
     setBrailleText(linesInBraille.join('\n'))
     setDotText(linesInDot.join('\n'))
-
-    /*const lastChar = value.charAt(value.length - 1)
-    if (lastChar === ' ') {
-      setTextToRead('space')
-    } else if (lastChar === '\n') {
-      setTextToRead('newline')
-    } else {
-      setTextToRead(lastChar)
-    }*/
   }
 
   const handleCtrl3 = () => {
@@ -115,15 +106,15 @@ const Editor = () => {
 
     // Assign a tabindex to each element
     elements.forEach((element, index) => {
-        element.setAttribute('tabindex', index + 1)
+      element.setAttribute('tabindex', index + 1)
     })
 
     return (() => {
-        elements.forEach((element) => {
-            element.removeAttribute('tabindex')
-        })
+      elements.forEach((element) => {
+        element.removeAttribute('tabindex')
+      })
     })
-}, [])
+  }, [])
 
   useEffect(() => {
     if (router) {
@@ -186,9 +177,9 @@ const Editor = () => {
               className='navigationElement'
               description='Braille text box'
               id='brailleText'
-              maxlength="1000"
+              maxLength="1000"
               name='brailleText'
-              onKeyDown={handleKeyDown}
+              onKeyDown={handleKeyDownText}
               placeholder='View in Braille'
               ref={brailleTextRef}
               style={{ fontSize: `50px`, height: `100%`, lineHeight: `1`, overflow: `hidden`, width: `100%` }}
@@ -200,8 +191,8 @@ const Editor = () => {
               description='English text box'
               id='text'
               onChange={onChange}
-              onKeyDown={handleKeyDown}
-              maxlength="1000"
+              onKeyDown={handleKeyDownText}
+              maxLength="1000"
               name='text'
               placeholder='Type in English'
               ref={textRef}
